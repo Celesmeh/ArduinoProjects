@@ -8,7 +8,6 @@ void setup()
   // Debug console
   Serial.begin(9600);
   pinMode(4, INPUT);
-  pinMode(2, INPUT);
   pinMode(11, OUTPUT);
   pinMode(10, OUTPUT);
   pinMode(9, OUTPUT);

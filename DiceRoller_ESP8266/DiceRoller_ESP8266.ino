@@ -166,7 +166,7 @@ void diceRoll() {
     display.setTextColor(WHITE);
     display.setTextSize(2);
     display.setCursor(77, 14);
-         display.println(roll); // daaamn yuss
+    display.println(roll); // daaamn yuss
   }
   else if (roll < 10) {
     //single character number
@@ -254,17 +254,16 @@ void menuBar() {
 //Dice Animation
 
 void diceAnimation() {
-  currentMillis = millis();
-  if (currentMillis > previousMillis + animationDelay) {
-    if (animationState = 0) {
-      d20();
-      animationState = 1;
-    }
-    else {
-      d20r();
-      animationState = 0;
-    }
-    previousMillis = currentMillis;
+
+  for (int i = 0; i <= 9; i++) {
+    d20();
+    delay(200);
+    display.drawRect(10, 9, 42, 23, BLACK);
+    display.fillRect(10, 9, 42, 23,  BLACK);
+    d20r();
+    delay(200);
+    display.drawRect(10, 9, 42, 23, BLACK);
+    display.fillRect(10, 9, 42, 23,  BLACK);
   }
 }
 
@@ -278,9 +277,7 @@ void DicePic() {
 
 
   if (currMenu == 6) {
-    for(int i = 0; i <= 6; i++){
-      diceAnimation();
-      }
+    diceAnimation();
   }
   if (currMenu == 5) {
     d12();

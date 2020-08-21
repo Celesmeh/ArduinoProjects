@@ -1,4 +1,4 @@
-@@ -0,0 +1,637 @@
+
 //********************************************************************************************************
 // Libs to bring
 #include <SPI.h>
@@ -151,21 +151,22 @@ void diceRoll() {
   // OLED make purdy
   if (roll == 1 && menuItems[currMenu] == 20) {
     display.fillScreen(BLACK); // erase all
+    menuBar();
     drawSkull();
     display.setTextColor(WHITE);
     display.setTextSize(2);
     display.setCursor(87, 14);
-    menuBar();
+
     display.println(roll); //get rekt
   }
   else if (roll == 20 && menuItems[currMenu] == 20) {
     display.fillScreen(BLACK); // erase all
+    menuBar();
     drawStar();
     display.setTextColor(WHITE);
     display.setTextSize(2);
     display.setCursor(77, 14);
-    menuBar();
-    display.println(roll); // daaamn yuss
+         display.println(roll); // daaamn yuss
   }
   else if (roll < 10) {
     //single character number

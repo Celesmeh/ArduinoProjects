@@ -278,7 +278,9 @@ void DicePic() {
 
 
   if (currMenu == 6) {
-    d20();
+    for(int i = 0; i <= 6; i++){
+      diceAnimation();
+      }
   }
   if (currMenu == 5) {
     d12();

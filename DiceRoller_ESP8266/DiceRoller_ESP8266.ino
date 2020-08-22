@@ -260,29 +260,7 @@ void menuBar() {
 //Random Number
 
 void randroll() {
-  switch (currMenu) {
-    case 0:
-      randNum = random(1,2);
-      break;
-    case 1:
-      randNum = random(1,4);
-      break;
-    case 2:
-      randNum = random(1,6);
-      break;
-    case 3:
-      randNum = random(1,8);
-      break;
-    case 4:
-      randNum = random(1,10);
-      break;
-    case 5:
-      randNum = random(1,12);
-      break;
-    case 6:
-      randNum = random(1,20);
-      break;
-  }
+  randNum = random(1,menuItems[currMenu]);
   if (randNum < 10) {
     //single character number
     FontDice();

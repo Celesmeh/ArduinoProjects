@@ -263,16 +263,13 @@ void randRoll() {
     //single character number
     FontDice();
     display.setCursor(87, 14);
-    display.println(randNum ); // write the roll
-
   }
   else {
     // dual character number
     FontDice();
     display.setCursor(77, 14);
-    display.println(randNum ); // write the roll
   }
-
+  display.println(randNum ); // write the roll
 }
 
 //********************************************************************************************************

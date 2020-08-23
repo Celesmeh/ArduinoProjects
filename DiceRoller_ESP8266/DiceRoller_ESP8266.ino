@@ -6,6 +6,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 #include <ESP8266TrueRandom.h>
+#include "AdafruitIO_WiFi.h"
 
 //********************************************************************************************************
 // define OLED info
@@ -16,11 +17,20 @@
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
 //********************************************************************************************************
-//Define Variables
+//Adafruit IO shit`
+#define WIFI_SSID "..............."
+#define WIFI_PASS ".............."
+#define IO_USERNAME ".............."
+#define IO_KEY ".............."
+AdafruitIO_WiFi io(IO_USERNAME, IO_KEY, WIFI_SSID, WIFI_PASS);
+
+
+AdafruitIO_Feed *diceT = io.feed("diceType");
+AdafruitIO_Feed *diceR = io.feed("diceRoll");
+//********************************************************************************************************
+//Define+Variables
+
 #define menu 6
-
-// Define Menu Size
-
 bool Next = HIGH;
 bool Dice = HIGH;
 String temp;
@@ -38,6 +48,24 @@ long randNum;
 //********************************************************************************************************
 // Set it all up pls
 void setup() {
+  //Begin Serial Connection
+  Serial.begin(9600);
+  //Connect to adafruit.io
+  io.connect();
+  //add message handler to feeds
+  diceT->onMessage(handleDice);
+  diceR->onMessage(handleDice);
+  //lmk if its connecting
+  while (io.status() < AIO_CONNECTED) {
+    Serial.print(".");
+    delay(500);
+  }
+  Serial.println();
+  Serial.println(io.statusText());
+  //get feed values
+  diceT->get();
+  diceR->get();
+
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C); // setup the OLED
   display.clearDisplay();
   display.setTextColor(WHITE);
@@ -47,8 +75,6 @@ void setup() {
   display.println("20 12 10 8 6 4 2"); // write the roll
   drawWel();
   display.display(); // write to display
-  Serial.begin(9600);
-
   pinMode(13, INPUT_PULLUP); // setup button 1
   pinMode(12, INPUT_PULLUP); // setup button 2
 
@@ -65,6 +91,9 @@ void setup() {
 // Loop dis pls
 
 void loop() {
+
+  io.run();
+
   //Menu Logic
   if (digitalRead(13) != Next) {
     Next = !Next;
@@ -89,6 +118,8 @@ void loop() {
     delay(150);
     if (!Next) {
       delay(50);
+      diceT->save(menuItems[currMenu]);
+      Serial.print("sending ->Dice Type ");
       diceRoll();
       breakfastSerials();
     }
@@ -119,6 +150,19 @@ void FontDice() {
 void ClearDice() {
   display.fillRect(10, 9, 128, 23,  BLACK);
 }
+
+//********************************************************************************************************
+//Dice Feed Handler
+
+void handleDice(AdafruitIO_Data *data) {
+
+  Serial.print("received <- ");
+  Serial.print(data->feedName());
+  Serial.print(" ");
+  Serial.println(data->value());
+
+}
+
 
 //********************************************************************************************************
 //Menu
@@ -152,7 +196,7 @@ void diceRoll() {
   display.fillScreen(BLACK); // erase all
   display.drawRect(0, 8, 128, 1, WHITE);
   menuBar();
-  DicePic();
+  dicePic();
   //Our Roll
   int roll = ESP8266TrueRandom.random(1, (menuItems[currMenu] + 1));
 
@@ -164,6 +208,8 @@ void diceRoll() {
     FontDice();
     display.setCursor(87, 14);
     display.println(roll); //get rekt
+    diceR->save(roll);
+    Serial.print("sending -> Dice Roll ");
   }
   else if (roll == 20 && menuItems[currMenu] == 20) {
     display.fillScreen(BLACK); // erase all
@@ -172,12 +218,16 @@ void diceRoll() {
     FontDice();
     display.setCursor(77, 14);
     display.println(roll); // daaamn yuss
+    diceR->save(roll);
+    Serial.print("sending -> Dice Roll ");
   }
   else if (roll < 10) {
     //single character number
     FontDice();
     display.setCursor(87, 14);
     display.println(roll); // write the roll
+    diceR->save(roll);
+    Serial.print("sending -> Dice Roll ");
 
   }
   else {
@@ -185,6 +235,8 @@ void diceRoll() {
     FontDice();
     display.setCursor(77, 14);
     display.println(roll); // write the roll
+    diceR->save(roll);
+    Serial.print("sending -> Dice Roll ");
   }
 
   display.display(); // write to display
@@ -279,11 +331,11 @@ void dicePic() {
   for (int i = 0; i < 3; i++) {
     int diceDelay = 100;
     diceDraw();
-    randroll();
+    randRoll();
     display.display();
     delay(diceDelay);
     ClearDice();
-    randroll();
+    randRoll();
     display.display();
     diceDrawr();
     display.display();

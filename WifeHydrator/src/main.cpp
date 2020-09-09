@@ -14,26 +14,25 @@ void setup()
 void loop()
 {
   if ( digitalRead(4)) {
+    count = 0;
+    g = 255;
+    b = 255;
+    setColor(0, 255, 255); // red
+    Serial.println("The blue led is on now");
+  }
+  else {
     for (int i = 0; i <= 60; i++) {
       if (count < 255) {
         count++;
         g--;
         b--;
         setColor(count, g, b); // blue
-        delay(50);
+        delay(100);
       }
-      else {
-        setColor(255 , 0 , 0);
-      }
+//      else {
+//        setColor(255 , 0 , 0);
+//      }
     }
-    Serial.println("cup");
-  }
-  else {
-    count = 0;
-    g = 255;
-    b = 255;
-    setColor(0, 255, 255); // red
-    Serial.println("no cup");
   }
 }
 

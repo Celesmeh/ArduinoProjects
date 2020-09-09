@@ -1,27 +1,44 @@
 
+
+
 //********************************************************************************************************
 // Libs to bring
 #include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
+#include <Adafruit_SSD1331.h>
 #include <ESP8266TrueRandom.h>
 #include "AdafruitIO_WiFi.h"
-
 //********************************************************************************************************
 // define OLED info
-#define SCREEN_WIDTH 128 // OLED display width, in pixels
-#define SCREEN_HEIGHT 32 // OLED display height, in pixels
-#define OLED_RESET     -1
+#define SCREEN_WIDTH 96 // OLED display width, in pixels
+#define SCREEN_HEIGHT 64 // OLED display height, in pixels
+#define OLED_RESET -1
 
-Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+#define sclk 13
+#define mosi 14
+#define cs   15
+#define rst  4
+#define dc   5
 
+Adafruit_SSD1331 display = Adafruit_SSD1331(&SPI, cs, dc, rst);
+
+#define BLACK           0x0000
+#define BLUE            0x001F
+#define RED             0xF800
+#define GREEN           0x07E0
+#define CYAN            0x07FF
+#define MAGENTA         0xF81F
+#define YELLOW          0xFFE0
+#define WHITE           0xFFFF
+
+#define show endWrite
 //********************************************************************************************************
 //Adafruit IO shit`
-#define WIFI_SSID "..............."
-#define WIFI_PASS ".............."
-#define IO_USERNAME ".............."
-#define IO_KEY ".............."
+#define WIFI_SSID "Dovahkiin"
+#define WIFI_PASS "FusRoDah"
+#define IO_USERNAME "Celesmeh"
+#define IO_KEY "aio_kihe8968JIi0HkEuZgPhrujDnJt8"
 AdafruitIO_WiFi io(IO_USERNAME, IO_KEY, WIFI_SSID, WIFI_PASS);
 
 
@@ -43,7 +60,8 @@ int dArray = (menuItems[currMenu]);
 int roll = ESP8266TrueRandom.random(1, (menuItems[currMenu] + 1));
 int animationDelay = 200; //So that's 5 frames per second
 long randNum;
-
+int button1 = 16;
+int button2 = 12;
 
 //********************************************************************************************************
 // Set it all up pls
@@ -66,17 +84,17 @@ void setup() {
   diceT->get();
   diceR->get();
 
-  display.begin(SSD1306_SWITCHCAPVCC, 0x3C); // setup the OLED
-  display.clearDisplay();
+  display.begin(); // setup the OLED
+  display.fillScreen(BLACK);
   display.setTextColor(WHITE);
   display.setTextSize(1);
   display.drawRect(0, 8, 128, 1, WHITE);
   display.setCursor(18, 1);
   display.println("20 12 10 8 6 4 2"); // write the roll
   drawWel();
-  display.display(); // write to display
-  pinMode(13, INPUT_PULLUP); // setup button 1
-  pinMode(12, INPUT_PULLUP); // setup button 2
+  display.show(); // write to display
+  pinMode(button1, INPUT_PULLUP); // setup button 1
+  pinMode(button2, INPUT_PULLUP); // setup button 2
 
   menuItems[0] = 2;
   menuItems[1] = 4;
@@ -95,7 +113,7 @@ void loop() {
   io.run();
 
   //Menu Logic
-  if (digitalRead(13) != Next) {
+  if (digitalRead(button1) != Next) {
     Next = !Next;
     delay(50);
     if (!Next) {
@@ -113,7 +131,7 @@ void loop() {
   }
 
   //Dice Logic
-  if (digitalRead(12) != Dice) {
+  if (digitalRead(button2) != Dice) {
     Next = !Next;
     delay(150);
     if (!Next) {
@@ -168,7 +186,7 @@ void handleDice(AdafruitIO_Data *data) {
 //Menu
 
 void MenuChanged() {
-  display.clearDisplay();
+  display.fillScreen(BLACK);
   display.drawRect(0, 8, 128, 1, WHITE);
   menuBar();
   if (currMenu < 4) {
@@ -183,7 +201,7 @@ void MenuChanged() {
   display.print("D");
   display.println(currentPrintOut); // write the roll
   Serial.println(currentPrintOut); // write the roll
-  display.display(); // write to display
+  display.show(); // write to display
   delay(25);
 
 }
@@ -239,7 +257,7 @@ void diceRoll() {
     Serial.print("sending -> Dice Roll ");
   }
 
-  display.display(); // write to display
+  display.show(); // write to display
   delay(100);
 }
 
@@ -332,13 +350,13 @@ void dicePic() {
     int diceDelay = 100;
     diceDraw();
     randRoll();
-    display.display();
+    display.show();
     delay(diceDelay);
     ClearDice();
     randRoll();
-    display.display();
+    display.show();
     diceDrawr();
-    display.display();
+    display.show();
     delay(diceDelay);
     ClearDice();
     diceDraw();

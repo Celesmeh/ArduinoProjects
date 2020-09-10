@@ -88,7 +88,8 @@ void setup() {
 
 int frame = 0;
 void loop() {
-  breathing();
+  checklist();
+  listing();
 }
 
 void breathing() {
@@ -102,8 +103,8 @@ void breathing() {
 }
 
 void listing() {
-  display.fillRect(80, 15, 48, 48, BLACK);
-  display.drawBitmap(80, 15, listAni[frame], FRAME_WIDTH[1], FRAME_HEIGHT[1], WHITE);
+  display.fillRect(80, 25, 48, 48, BLACK);
+  display.drawBitmap(80, 25, listAni[frame], FRAME_WIDTH[1], FRAME_HEIGHT[1], WHITE);
   frame = (frame + 1) % BREATH_COUNT;
   display.display();
   delay(FRAME_DELAY);

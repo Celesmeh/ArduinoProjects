@@ -15,8 +15,8 @@ Adafruit_SSD1306 display(128, 64, &Wire, OLED_RST_PIN);
 #define BREATH_COUNT (sizeof(breathAni) / sizeof(breathAni[0]))
 #define LIST_COUNT (sizeof(listAni) / sizeof(listAni[0]))
 
-int FRAME_WIDTH[]=  {48, 32};
-int FRAME_HEIGHT[]= {48, 32};
+int FRAME_WIDTH[] =  {48, 32};
+int FRAME_HEIGHT[] = {48, 32};
 
 //Animations
 const byte PROGMEM breathAni[][288] = {
@@ -103,8 +103,8 @@ void breathing() {
 }
 
 void listing() {
-  display.fillRect(80, 25, 48, 48, BLACK);
-  display.drawBitmap(80, 25, listAni[frame], FRAME_WIDTH[1], FRAME_HEIGHT[1], WHITE);
+  display.fillRect(95, 25, 48, 48, BLACK);
+  display.drawBitmap(95, 23, listAni[frame], FRAME_WIDTH[1], FRAME_HEIGHT[1], WHITE);
   frame = (frame + 1) % BREATH_COUNT;
   display.display();
   delay(FRAME_DELAY);
@@ -113,5 +113,11 @@ void listing() {
 void checklist() {
   display.setCursor(8, 5);
   display.println("Self Care Checklist:");
+  display.setCursor(0, 20);
+  display.println("[ ] drink water");
+  display.println("[ ] have snack");
+  display.println("[ ] take meds");
+  display.println("[ ] check in");
+  display.println("[ ] do one thing");
   display.display();
 }
